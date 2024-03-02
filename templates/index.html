@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lung Tumour Classification</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        form {
+            margin-top: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        input[type="file"] {
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+
+        .model-options {
+            display: none;
+            position: absolute;
+            top: calc(100% + 5px);
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #fff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            z-index: 1;
+            padding: 10px;
+            border-radius: 5px;
+            text-align: left;
+        }
+
+        input[type="checkbox"] {
+            margin-right: 5px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        button {
+            padding: 10px;
+            background-color: #4caf50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        p {
+            color: #000000;
+        }
+
+        h2 {
+            margin-top: 20px;
+            color: #333;
+        }
+
+        p.result {
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Lung Tumour Classification</h1>
+
+    <form action="/upload" method="post" enctype="multipart/form-data">
+        <input type="file" name="file" accept=".jpg,.jpeg,.png" required>
+        <button type="button" onclick="toggleModelSelection()">Select models</button>
+        <div id="modelOptionsContainer" class="model-options">
+            <label><input type="checkbox" name="models" value="Logistic Regression"> Logistic Regression</label>
+            <label><input type="checkbox" name="models" value="Naive Bayes"> Naive Bayes</label>
+            <label><input type="checkbox" name="models" value="KNN"> KNN</label>
+            <label><input type="checkbox" name="models" value="Neural Network"> Neural Network</label>
+        </div>
+        <button type="submit">Submit</button>
+    </form>
+
+    {% if error %}
+        <p>{{ error }}</p>
+    {% endif %}
+
+    {% if results %}
+        <h2>Results:</h2>
+        {% for model, result in results.items() %}
+            <p class="result">{{ model }}: {{ result }}</p>
+        {% endfor %}
+    {% endif %}
+
+    <script>
+        function toggleModelSelection() {
+            var modelOptions = document.getElementById("modelOptionsContainer");
+            modelOptions.style.display = (modelOptions.style.display === "none" || modelOptions.style.display === "") ? "block" : "none";
+        }
+    </script>
+</body>
+</html>
+
