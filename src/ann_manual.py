@@ -1,12 +1,8 @@
 import os
 import numpy as np
 import joblib
-import preproc as pr
-from evaluation import CrossValidation
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
-np.random.seed(42)
+from sklearn.preprocessing import StandardScaler
+from evaluation import run_experiment, ROOT_DIR
 
 
 def sigmoid(x):
@@ -73,22 +69,17 @@ def predict(inputs, weights):
     return np.argmax(output, axis=1)
 
 
-dataset_dir = os.path.join(BASE_DIR, "dataset")
+def train(X, y):
+    np.random.seed(42)
+    scaler = StandardScaler().fit(X)
+    weights = train_neural_network(scaler.transform(X), y)
+    return {'scaler': scaler, 'weights': weights}
 
-images, labels, groups = pr.load_dataset(dataset_dir)
-X = np.array([pr.extract_features(img) for img in images])
+def predict_labels(model, X):
+    return predict(model['scaler'].transform(X), model['weights'])
 
-cv = CrossValidation('Neural Network')
 
-for fold, (train_idx, test_idx) in enumerate(pr.get_folds(labels, groups), 1):
-    weights = train_neural_network(X[train_idx], labels[train_idx])
-
-    train_pred = predict(X[train_idx], weights)
-    test_pred = predict(X[test_idx], weights)
-    cv.add_fold(fold, labels[train_idx], train_pred, labels[test_idx], test_pred)
-
-cv.summary(os.path.join(BASE_DIR, 'results'))
-
-# same file name the app loads
-weights = train_neural_network(X, labels)
-joblib.dump(weights, os.path.join(BASE_DIR, 'neural_network_weights.joblib'))
+if __name__ == '__main__':
+    final_model = run_experiment('Neural Network', train, predict_labels)
+    os.makedirs(os.path.join(ROOT_DIR, 'models'), exist_ok=True)
+    joblib.dump(final_model, os.path.join(ROOT_DIR, 'models', 'neural_network.joblib'))

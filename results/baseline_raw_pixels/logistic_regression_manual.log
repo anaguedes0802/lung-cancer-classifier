@@ -1,0 +1,27 @@
+(1054, 22500)
+Fold 1: train acc 1.0000 | test acc 0.6106 | macro F1 0.4697 | benign recall 0.1111 | test size 208
+Fold 2: train acc 1.0000 | test acc 0.6077 | macro F1 0.4351 | benign recall 0.0000 | test size 209
+Fold 3: train acc 1.0000 | test acc 0.6459 | macro F1 0.5530 | benign recall 0.3333 | test size 209
+Fold 4: train acc 1.0000 | test acc 0.6045 | macro F1 0.4389 | benign recall 0.0000 | test size 220
+Fold 5: train acc 1.0000 | test acc 0.6394 | macro F1 0.4606 | benign recall 0.0000 | test size 208
+
+Logistic Regression, 5-fold cross-validation (mean +- std):
+  train_acc: 1.0000 +- 0.0000
+  acc: 0.6216 +- 0.0174
+  macro_f1: 0.4714 +- 0.0428
+  benign_recall: 0.0889 +- 0.1296
+
+Classification report (all folds together):
+              precision    recall  f1-score   support
+
+      Benign     0.0808    0.0784    0.0796       102
+   Malignant     0.8322    0.6984    0.7594       547
+      Normal     0.5343    0.6543    0.5882       405
+
+    accuracy                         0.6214      1054
+   macro avg     0.4824    0.4770    0.4758      1054
+weighted avg     0.6450    0.6214    0.6279      1054
+
+[[  8  15  79]
+ [ 13 382 152]
+ [ 78  62 265]]

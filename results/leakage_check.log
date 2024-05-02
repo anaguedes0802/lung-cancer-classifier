@@ -1,0 +1,2 @@
+random split: accuracy 0.9535 | macro F1 0.9042 | benign recall 0.7438
+patient split: accuracy 0.8732 | macro F1 0.7294 | benign recall 0.3739

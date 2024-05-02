@@ -1,0 +1,14 @@
+{
+  "random split": {
+    "accuracy": 0.9535093658316407,
+    "macro_f1": 0.9042360937635172,
+    "benign_recall": 0.7438095238095238,
+    "malignant_recall": 0.998165137614679
+  },
+  "patient split": {
+    "accuracy": 0.8731624953993375,
+    "macro_f1": 0.7293941402258906,
+    "benign_recall": 0.37390602944141965,
+    "malignant_recall": 0.967188706638248
+  }
+}

@@ -1,0 +1,4 @@
+1054 images after removing duplicates, per class (benign, malignant, normal): [102 547 405]
+103 approximate patient groups
+Feature matrix: (1054, 4096)
+Done in 206 s

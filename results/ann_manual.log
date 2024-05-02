@@ -1,0 +1,33 @@
+Neural Network
+Development set: 845 images, test set: 209 images (20 patient groups)
+
+Fold 1: accuracy 0.9107 | macro F1 0.6715 | benign recall 0.0769
+Fold 2: accuracy 0.8415 | macro F1 0.6221 | benign recall 0.0769
+Fold 3: accuracy 0.9398 | macro F1 0.8243 | benign recall 0.4000
+Fold 4: accuracy 0.8101 | macro F1 0.6062 | benign recall 0.0345
+Fold 5: accuracy 0.7976 | macro F1 0.6350 | benign recall 0.2143
+
+Cross-validation on the development set (mean +- std):
+  accuracy: 0.8599 +- 0.0560
+  macro_f1: 0.6718 +- 0.0792
+  benign_recall: 0.1605 +- 0.1342
+  malignant_recall: 0.9661 +- 0.0512
+
+Held-out test set:
+  accuracy: 0.8900
+  macro_f1: 0.6924
+  benign_recall: 0.1667
+  malignant_recall: 1.0000
+              precision    recall  f1-score   support
+
+      Benign     0.3333    0.1667    0.2222        18
+   Malignant     0.9821    1.0000    0.9910       110
+      Normal     0.8295    0.9012    0.8639        81
+
+    accuracy                         0.8900       209
+   macro avg     0.7150    0.6893    0.6924       209
+weighted avg     0.8671    0.8900    0.8755       209
+
+[[  3   0  15]
+ [  0 110   0]
+ [  6   2  73]]

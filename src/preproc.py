@@ -3,11 +3,8 @@ import re
 import hashlib
 import numpy as np
 import cv2
-from skimage.feature import hog
+from scipy import ndimage as ndi
 from sklearn.model_selection import StratifiedGroupKFold
-import pywt
-
-IMG_SIZE = (150, 150)
 
 # number of patients per class, from the dataset description (benign, malignant, normal)
 PATIENTS_PER_CLASS = [15, 40, 55]
@@ -16,15 +13,12 @@ PATIENTS_PER_CLASS = [15, 40, 55]
 def load_image(image_path):
     image = cv2.imread(image_path, cv2.IMREAD_GRAYSCALE)
 
-    # centre crop to a square first, some images are 512x623 or 512x801 and
+    # centre crop to a square, some images are 512x623 or 512x801 and
     # stretching them would let the models learn the shape instead of the content
     h, w = image.shape
     s = min(h, w)
     top, left = (h - s) // 2, (w - s) // 2
-    image = image[top:top + s, left:left + s]
-
-    image = cv2.resize(image, IMG_SIZE)
-    return image / 255.0
+    return image[top:top + s, left:left + s]
 
 
 def file_number(filename):
@@ -37,7 +31,8 @@ def patient_groups(images, labels, near_duplicate_threshold=3.0):
     # consecutive files are almost always from the same patient. We cut each class
     # at the biggest jumps between consecutive images (one cut less than the number
     # of patients), and then join groups that share near-identical images.
-    small = np.array([cv2.resize(img, (64, 64)).flatten() for img in images])
+    # small 64x64 copies, made from the 150x150 images used in the first version so the groups stay the same
+    small = np.array([cv2.resize(cv2.resize(img, (150, 150)) / 255.0, (64, 64)).flatten() for img in images])
     groups = np.zeros(len(images), dtype=int)
     next_group = 0
 
@@ -94,25 +89,47 @@ def load_dataset(dataset_dir):
             images.append(load_image(image_path))
             labels.append(i)
 
-    images = np.array(images)
     labels = np.array(labels)
     groups = patient_groups(images, labels)
 
     return images, labels, groups
 
 
-def extract_features(image, use_hog=False, use_wavelet=False):
-    if use_hog:
-        features = hog(image, orientations=9, pixels_per_cell=(8, 8), cells_per_block=(3, 3), block_norm='L2-Hys')
-    else:
-        features = image.flatten()
+def lung_box(image):
+    # rough lung segmentation: the lungs are the two biggest dark regions inside the body
+    x = cv2.GaussianBlur(cv2.resize(image, (256, 256)), (5, 5), 0)
+    scale = image.shape[0] / 256
 
-    if use_wavelet:
-        LL, (LH, HL, HH) = pywt.dwt2(image, 'bior1.3')
-        wavelet_features = np.concatenate([LL.flatten(), LH.flatten(), HL.flatten(), HH.flatten()])
-        features = np.concatenate([features, wavelet_features])
+    _, body = cv2.threshold(x, 0, 255, cv2.THRESH_BINARY + cv2.THRESH_OTSU)
+    body = ndi.binary_fill_holes(body > 0)
+    lab, n = ndi.label(body)
+    if n > 0:
+        body = lab == (np.argmax(np.bincount(lab.ravel())[1:]) + 1)
 
-    return features
+    dark = (x < np.percentile(x[body], 35)) & body
+    dark = ndi.binary_opening(dark, iterations=2)
+    lab, n = ndi.label(dark)
+    if n == 0:
+        return 0, 0, image.shape[1], image.shape[0]
+
+    sizes = np.bincount(lab.ravel())
+    sizes[0] = 0
+    keep = np.argsort(sizes)[-2:]
+    mask = np.isin(lab, keep[sizes[keep] > 300])
+    if mask.sum() == 0:
+        return 0, 0, image.shape[1], image.shape[0]
+
+    ys, xs = np.where(mask)
+    pad = 8
+    x0, y0 = max(xs.min() - pad, 0), max(ys.min() - pad, 0)
+    x1, y1 = min(xs.max() + pad, 255), min(ys.max() + pad, 255)
+    return int(x0 * scale), int(y0 * scale), int(x1 * scale), int(y1 * scale)
+
+
+def dev_test_split(labels, groups):
+    # ~20% of the patients are kept aside as the final test set and only used once
+    sgkf = StratifiedGroupKFold(n_splits=5, shuffle=True, random_state=7)
+    return next(sgkf.split(np.zeros(len(labels)), labels, groups))
 
 
 def get_folds(labels, groups, n_splits=5):

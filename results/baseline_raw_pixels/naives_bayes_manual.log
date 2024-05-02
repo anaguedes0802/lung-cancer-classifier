@@ -1,0 +1,26 @@
+Fold 1: train acc 0.9243 | test acc 0.5865 | macro F1 0.4452 | benign recall 0.1111 | test size 208
+Fold 2: train acc 0.9396 | test acc 0.6842 | macro F1 0.4804 | benign recall 0.0000 | test size 209
+Fold 3: train acc 0.8757 | test acc 0.7895 | macro F1 0.5825 | benign recall 0.0556 | test size 209
+Fold 4: train acc 0.9197 | test acc 0.5818 | macro F1 0.4329 | benign recall 0.0345 | test size 220
+Fold 5: train acc 0.9255 | test acc 0.6731 | macro F1 0.4713 | benign recall 0.0000 | test size 208
+
+Naive Bayes + PCA, 5-fold cross-validation (mean +- std):
+  train_acc: 0.9170 +- 0.0217
+  acc: 0.6630 +- 0.0761
+  macro_f1: 0.4825 +- 0.0529
+  benign_recall: 0.0402 +- 0.0413
+
+Classification report (all folds together):
+              precision    recall  f1-score   support
+
+      Benign     0.1600    0.0392    0.0630       102
+   Malignant     0.7972    0.7185    0.7558       547
+      Normal     0.5616    0.7432    0.6397       405
+
+    accuracy                         0.6622      1054
+   macro avg     0.5062    0.5003    0.4862      1054
+weighted avg     0.6450    0.6622    0.6441      1054
+
+[[  4  17  81]
+ [  0 393 154]
+ [ 21  83 301]]

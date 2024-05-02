@@ -1,0 +1,26 @@
+Fold 1: train acc 0.9965 | test acc 0.5625 | macro F1 0.4176 | benign recall 0.1111 | test size 208
+Fold 2: train acc 0.9917 | test acc 0.6268 | macro F1 0.4361 | benign recall 0.0000 | test size 209
+Fold 3: train acc 0.9905 | test acc 0.7081 | macro F1 0.6127 | benign recall 0.3333 | test size 209
+Fold 4: train acc 0.9940 | test acc 0.6364 | macro F1 0.4663 | benign recall 0.0345 | test size 220
+Fold 5: train acc 0.9965 | test acc 0.7115 | macro F1 0.5002 | benign recall 0.0000 | test size 208
+
+Neural Network, 5-fold cross-validation (mean +- std):
+  train_acc: 0.9938 +- 0.0024
+  acc: 0.6491 +- 0.0558
+  macro_f1: 0.4866 +- 0.0690
+  benign_recall: 0.0958 +- 0.1255
+
+Classification report (all folds together):
+              precision    recall  f1-score   support
+
+      Benign     0.1452    0.0882    0.1098       102
+   Malignant     0.8080    0.7386    0.7717       547
+      Normal     0.5508    0.6691    0.6042       405
+
+    accuracy                         0.6490      1054
+   macro avg     0.5013    0.4986    0.4952      1054
+weighted avg     0.6450    0.6490    0.6433      1054
+
+[[  9  15  78]
+ [  0 404 143]
+ [ 53  81 271]]

@@ -1,0 +1,33 @@
+Logistic Regression
+Development set: 845 images, test set: 209 images (20 patient groups)
+
+Fold 1: accuracy 0.8988 | macro F1 0.6912 | benign recall 0.1538
+Fold 2: accuracy 0.8720 | macro F1 0.6884 | benign recall 0.2308
+Fold 3: accuracy 0.9337 | macro F1 0.8522 | benign recall 0.6000
+Fold 4: accuracy 0.8101 | macro F1 0.6534 | benign recall 0.1379
+Fold 5: accuracy 0.8214 | macro F1 0.6745 | benign recall 0.2857
+
+Cross-validation on the development set (mean +- std):
+  accuracy: 0.8672 +- 0.0465
+  macro_f1: 0.7119 +- 0.0714
+  benign_recall: 0.2817 +- 0.1679
+  malignant_recall: 0.9568 +- 0.0527
+
+Held-out test set:
+  accuracy: 0.8612
+  macro_f1: 0.6948
+  benign_recall: 0.2778
+  malignant_recall: 0.9818
+              precision    recall  f1-score   support
+
+      Benign     0.2632    0.2778    0.2703        18
+   Malignant     0.9818    0.9818    0.9818       110
+      Normal     0.8375    0.8272    0.8323        81
+
+    accuracy                         0.8612       209
+   macro avg     0.6942    0.6956    0.6948       209
+weighted avg     0.8640    0.8612    0.8626       209
+
+[[  5   0  13]
+ [  2 108   0]
+ [ 12   2  67]]

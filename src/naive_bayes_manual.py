@@ -1,11 +1,9 @@
 import os
 import numpy as np
 import joblib
+from sklearn.preprocessing import StandardScaler
 from sklearn.decomposition import PCA
-import preproc as pr
-from evaluation import CrossValidation
-
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+from evaluation import run_experiment, ROOT_DIR
 
 
 # Gaussian Naive Bayes
@@ -48,36 +46,19 @@ def predict_naive_bayes(model_params, X):
 
     return np.array(predictions)
 
-# PCA (fitted on the training data only) followed by Naive Bayes
-def train_naive_bayes_pca(X, y, class_priors=None, n_components=None):
-    pca = PCA(n_components=n_components, random_state=42)
-    X_pca = pca.fit_transform(X)
-    nb_model_params = train_naive_bayes(X_pca, y, class_priors=class_priors)
 
-    return {'nb_model_params': nb_model_params, 'pca': pca}
+# PCA first, Naive Bayes assumes independent features and the PCA components are uncorrelated
+def train(X, y):
+    scaler = StandardScaler().fit(X)
+    pca = PCA(n_components=20, random_state=42).fit(scaler.transform(X))
+    nb = train_naive_bayes(pca.transform(scaler.transform(X)), y)
+    return {'scaler': scaler, 'pca': pca, 'nb': nb}
 
-def predict_naive_bayes_pca(model_params, X):
-    X_pca = model_params['pca'].transform(X)
-    return predict_naive_bayes(model_params['nb_model_params'], X_pca)
+def predict_labels(model, X):
+    return predict_naive_bayes(model['nb'], model['pca'].transform(model['scaler'].transform(X)))
 
 
-dataset_dir = os.path.join(BASE_DIR, "dataset")
-
-images, labels, groups = pr.load_dataset(dataset_dir)
-X = np.array([pr.extract_features(img) for img in images])
-
-n_components = 120
-
-cv = CrossValidation('Naive Bayes + PCA')
-
-for fold, (train_idx, test_idx) in enumerate(pr.get_folds(labels, groups), 1):
-    model = train_naive_bayes_pca(X[train_idx], labels[train_idx], n_components=n_components)
-
-    train_pred = predict_naive_bayes_pca(model, X[train_idx])
-    test_pred = predict_naive_bayes_pca(model, X[test_idx])
-    cv.add_fold(fold, labels[train_idx], train_pred, labels[test_idx], test_pred)
-
-cv.summary(os.path.join(BASE_DIR, 'results'))
-
-nb_model_params_with_pca = train_naive_bayes_pca(X, labels, n_components=n_components)
-joblib.dump(nb_model_params_with_pca, os.path.join(BASE_DIR, 'naive_bayes_model_with_pca.joblib'))
+if __name__ == '__main__':
+    final_model = run_experiment('Naive Bayes', train, predict_labels)
+    os.makedirs(os.path.join(ROOT_DIR, 'models'), exist_ok=True)
+    joblib.dump(final_model, os.path.join(ROOT_DIR, 'models', 'naive_bayes.joblib'))
